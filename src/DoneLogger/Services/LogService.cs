@@ -45,7 +45,7 @@ public class LogService
         if (previousPath != null)
         {
             carryForward = ExtractSectionLines(previousPath, "What is next");
-            AnnotateSectionLines(previousPath, "What is next", "[moved forward]");
+            DeleteSection(previousPath, "What is next");
         }
 
         var sb = new StringBuilder();
@@ -133,25 +133,27 @@ public class LogService
         return result;
     }
 
-    private void AnnotateSectionLines(string filePath, string sectionName, string annotation)
+    private void DeleteSection(string filePath, string sectionName)
     {
         var lines = File.ReadAllLines(filePath).ToList();
-        bool inSection = false;
 
-        for (int i = 0; i < lines.Count; i++)
+        int sectionStart = lines.FindIndex(l => l.TrimEnd() == $"## {sectionName}");
+        if (sectionStart < 0) return;
+
+        int sectionEnd = lines.Count;
+        for (int i = sectionStart + 1; i < lines.Count; i++)
         {
-            if (lines[i].TrimEnd() == $"## {sectionName}")
+            if (lines[i].StartsWith("## ") || lines[i].StartsWith("# "))
             {
-                inSection = true;
-                continue;
-            }
-            if (inSection)
-            {
-                if (lines[i].StartsWith("## ") || lines[i].StartsWith("# ")) break;
-                if (!string.IsNullOrWhiteSpace(lines[i]) && !lines[i].TrimEnd().EndsWith(annotation))
-                    lines[i] = lines[i].TrimEnd() + $" {annotation}";
+                sectionEnd = i;
+                break;
             }
         }
+
+        // Remove the heading + all content up to (but not including) the next section.
+        // The blank line before the heading is preserved and naturally becomes the
+        // separator between the surrounding sections.
+        lines.RemoveRange(sectionStart, sectionEnd - sectionStart);
 
         File.WriteAllLines(filePath, lines, Encoding.UTF8);
     }
