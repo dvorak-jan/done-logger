@@ -13,3 +13,6 @@ publish/
 src/DoneLogger/config.json
 state.json
 config.json
+
+# Claude settings
+.claude/
