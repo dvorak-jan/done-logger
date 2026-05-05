@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dotnet *)"
+      "Bash(dotnet *)",
+      "Bash(gh auth *)",
+      "Bash(gh issue *)",
+      "Bash(curl -L \"https://github.com/user-attachments/assets/b68692fe-f088-4ff3-b028-5540b80e74a2\" -o /c/Users/jdsig/Desktop/repos/done-logger/src/DoneLogger/checkmark.ico)"
     ]
   }
 }

@@ -17,6 +17,10 @@ public partial class MainForm : Form
 
         InitializeComponent();
 
+        using var iconStream = GetType().Assembly.GetManifestResourceStream("DoneLogger.checkmark.ico");
+        if (iconStream != null)
+            Icon = new Icon(iconStream);
+
         foreach (var cat in config.Categories)
             cboCategory.Items.Add(cat.Name);
 
