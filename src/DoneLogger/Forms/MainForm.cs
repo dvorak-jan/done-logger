@@ -17,7 +17,7 @@ public partial class MainForm : Form
 
         InitializeComponent();
 
-        using var iconStream = GetType().Assembly.GetManifestResourceStream("DoneLogger.checkmark.ico");
+        using var iconStream = GetType().Assembly.GetManifestResourceStream("DoneLogger.donelogger.ico");
         if (iconStream != null)
             Icon = new Icon(iconStream);
 

@@ -6,11 +6,11 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>checkmark.ico</ApplicationIcon>
+    <ApplicationIcon>donelogger.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="checkmark.ico" />
+    <EmbeddedResource Include="donelogger.ico" />
   </ItemGroup>
 
 </Project>
