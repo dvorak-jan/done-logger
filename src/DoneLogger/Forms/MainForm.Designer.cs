@@ -27,6 +27,9 @@ partial class MainForm
     private Label lblStopTimeLabel = null!;
     private TextBox txtStopTime = null!;
     private Button btnStopWorkAdv = null!;
+    private GroupBox grpOpenLog = null!;
+    private ComboBox cboLogDate = null!;
+    private Button btnOpenLogDate = null!;
 
     private System.Windows.Forms.Timer timerElapsed = null!;
 
@@ -61,11 +64,15 @@ partial class MainForm
         lblStopTimeLabel = new Label();
         txtStopTime = new TextBox();
         btnStopWorkAdv = new Button();
+        grpOpenLog = new GroupBox();
+        cboLogDate = new ComboBox();
+        btnOpenLogDate = new Button();
 
         timerElapsed = new System.Windows.Forms.Timer(components);
 
         SuspendLayout();
         grpCustomTime.SuspendLayout();
+        grpOpenLog.SuspendLayout();
         tabMain.SuspendLayout();
         tabAdvanced.SuspendLayout();
         tabControl.SuspendLayout();
@@ -153,7 +160,25 @@ partial class MainForm
             lblStopTimeLabel, txtStopTime, btnStopWorkAdv
         });
 
-        tabAdvanced.Controls.AddRange(new Control[] { btnCreateLog, grpCustomTime });
+        // grpOpenLog
+        cboLogDate.DropDownStyle = ComboBoxStyle.DropDownList;
+        cboLogDate.FormattingEnabled = true;
+        cboLogDate.Location = new Point(8, 22);
+        cboLogDate.Size = new Size(210, 23);
+
+        btnOpenLogDate.Location = new Point(226, 19);
+        btnOpenLogDate.Size = new Size(100, 32);
+        btnOpenLogDate.Text = "Open Log";
+        btnOpenLogDate.Click += btnOpenLogDate_Click;
+
+        grpOpenLog.Location = new Point(8, 152);
+        grpOpenLog.Size = new Size(334, 62);
+        grpOpenLog.Text = "Open log by date";
+        grpOpenLog.Controls.AddRange(new Control[] { cboLogDate, btnOpenLogDate });
+
+        tabAdvanced.Controls.AddRange(new Control[] {
+            btnCreateLog, grpCustomTime, grpOpenLog
+        });
         tabAdvanced.Text = "Advanced";
 
         // ── TabControl ───────────────────────────────────────────
@@ -178,6 +203,7 @@ partial class MainForm
 
         grpCustomTime.ResumeLayout(false);
         grpCustomTime.PerformLayout();
+        grpOpenLog.ResumeLayout(false);
         tabMain.ResumeLayout(false);
         tabMain.PerformLayout();
         tabAdvanced.ResumeLayout(false);

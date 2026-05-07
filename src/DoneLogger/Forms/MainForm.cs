@@ -27,6 +27,8 @@ public partial class MainForm : Form
         var defaultCat = config.Categories.FirstOrDefault(c => c.IsDefault);
         cboCategory.SelectedItem = defaultCat?.Name ?? config.Categories[0].Name;
 
+        cboLogDate.Format += (s, e) => { if (e.ListItem is DateTime d) e.Value = d.ToString("yyyy-MM-dd"); };
+        RefreshLogDates();
         RefreshState();
     }
 
@@ -57,6 +59,15 @@ public partial class MainForm : Form
         }
     }
 
+    private void RefreshLogDates()
+    {
+        cboLogDate.Items.Clear();
+        foreach (var date in _logService.GetAllLogDates())
+            cboLogDate.Items.Add(date);
+        if (cboLogDate.Items.Count > 0)
+            cboLogDate.SelectedIndex = 0;
+    }
+
     private void UpdateElapsed(DateTime startTime)
     {
         var elapsed = DateTime.Now - startTime;
@@ -70,13 +81,18 @@ public partial class MainForm : Form
             UpdateElapsed(state.StartTime);
     }
 
-    private void tabControl_Selected(object? sender, TabControlEventArgs e) { }
+    private void tabControl_Selected(object? sender, TabControlEventArgs e)
+    {
+        if (e.TabPage == tabAdvanced)
+            RefreshLogDates();
+    }
 
     private void btnCreateLog_Click(object? sender, EventArgs e)
     {
         try
         {
             _logService.CreateLog(DateTime.Today);
+            RefreshLogDates();
             MessageBox.Show($"Log created for {DateTime.Today:yyyy-MM-dd}.", "Done",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -91,11 +107,19 @@ public partial class MainForm : Form
         }
     }
 
-    private void btnEditLog_Click(object? sender, EventArgs e)
+    private void btnEditLog_Click(object? sender, EventArgs e) =>
+        OpenInEditor(_logService.FindMostRecentLogPath());
+
+    private void btnOpenLogDate_Click(object? sender, EventArgs e)
+    {
+        if (cboLogDate.SelectedItem is DateTime date)
+            OpenInEditor(_logService.GetLogPath(date));
+    }
+
+    private void OpenInEditor(string? logPath)
     {
         try
         {
-            string? logPath = _logService.FindMostRecentLogPath();
             if (logPath == null)
             {
                 MessageBox.Show("No log files found.", "Nothing to Open",
