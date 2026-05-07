@@ -115,16 +115,16 @@ partial class MainForm
         // ── Main tab ──────────────────────────────────────────────
 
         lblStatus.Location = new Point(8, 10);
-        lblStatus.Size = new Size(336, 20);
+        lblStatus.Size = new Size(356, 20);
         lblStatus.Text = "Not tracking";
 
         lblElapsed.Location = new Point(8, 34);
-        lblElapsed.Size = new Size(336, 22);
+        lblElapsed.Size = new Size(356, 22);
         lblElapsed.Font = new Font(Font.FontFamily, 10F, FontStyle.Bold);
         lblElapsed.Text = string.Empty;
 
         btnEditLog.Location = new Point(8, 68);
-        btnEditLog.Size = new Size(336, 32);
+        btnEditLog.Size = new Size(356, 32);
         btnEditLog.Text = "Edit Latest Log";
         btnEditLog.Click += btnEditLog_Click;
 
@@ -134,15 +134,15 @@ partial class MainForm
 
         cboCategory.DropDownStyle = ComboBoxStyle.DropDownList;
         cboCategory.Location = new Point(80, 113);
-        cboCategory.Size = new Size(256, 23);
+        cboCategory.Size = new Size(276, 23);
 
         btnStartWork.Location = new Point(8, 148);
-        btnStartWork.Size = new Size(160, 35);
+        btnStartWork.Size = new Size(174, 35);
         btnStartWork.Text = "Start Work";
         btnStartWork.Click += btnStartWork_Click;
 
-        btnStopWork.Location = new Point(176, 148);
-        btnStopWork.Size = new Size(160, 35);
+        btnStopWork.Location = new Point(190, 148);
+        btnStopWork.Size = new Size(174, 35);
         btnStopWork.Text = "Stop Work";
         btnStopWork.Click += btnStopWork_Click;
 
@@ -156,7 +156,7 @@ partial class MainForm
         // ── Advanced tab ──────────────────────────────────────────
 
         btnCreateLog.Location = new Point(8, 8);
-        btnCreateLog.Size = new Size(334, 32);
+        btnCreateLog.Size = new Size(356, 32);
         btnCreateLog.Text = "Create New Log";
         btnCreateLog.Click += btnCreateLog_Click;
 
@@ -170,7 +170,7 @@ partial class MainForm
         txtStartTime.MaxLength = 5;
 
         btnStartWorkAdv.Location = new Point(178, 16);
-        btnStartWorkAdv.Size = new Size(148, 32);
+        btnStartWorkAdv.Size = new Size(170, 32);
         btnStartWorkAdv.Text = "Start Work";
         btnStartWorkAdv.Click += btnStartWorkAdv_Click;
 
@@ -183,12 +183,12 @@ partial class MainForm
         txtStopTime.MaxLength = 5;
 
         btnStopWorkAdv.Location = new Point(178, 52);
-        btnStopWorkAdv.Size = new Size(148, 32);
+        btnStopWorkAdv.Size = new Size(170, 32);
         btnStopWorkAdv.Text = "Stop Work";
         btnStopWorkAdv.Click += btnStopWorkAdv_Click;
 
         grpCustomTime.Location = new Point(8, 48);
-        grpCustomTime.Size = new Size(334, 96);
+        grpCustomTime.Size = new Size(356, 96);
         grpCustomTime.Text = "Custom time";
         grpCustomTime.Controls.AddRange(new Control[] {
             lblStartTimeLabel, txtStartTime, btnStartWorkAdv,
@@ -199,15 +199,15 @@ partial class MainForm
         cboLogDate.DropDownStyle = ComboBoxStyle.DropDownList;
         cboLogDate.FormattingEnabled = true;
         cboLogDate.Location = new Point(8, 22);
-        cboLogDate.Size = new Size(210, 23);
+        cboLogDate.Size = new Size(232, 23);
 
-        btnOpenLogDate.Location = new Point(226, 19);
+        btnOpenLogDate.Location = new Point(248, 19);
         btnOpenLogDate.Size = new Size(100, 32);
         btnOpenLogDate.Text = "Open Log";
         btnOpenLogDate.Click += btnOpenLogDate_Click;
 
         grpOpenLog.Location = new Point(8, 152);
-        grpOpenLog.Size = new Size(334, 62);
+        grpOpenLog.Size = new Size(356, 62);
         grpOpenLog.Text = "Open log by date";
         grpOpenLog.Controls.AddRange(new Control[] { cboLogDate, btnOpenLogDate });
 
@@ -225,7 +225,7 @@ partial class MainForm
         dtpFrom.Format = DateTimePickerFormat.Custom;
         dtpFrom.CustomFormat = "yyyy-MM-dd";
         dtpFrom.Location = new Point(52, 8);
-        dtpFrom.Size = new Size(280, 23);
+        dtpFrom.Size = new Size(308, 23);
         dtpFrom.Value = DateTime.Today;
 
         lblTo.AutoSize = true;
@@ -235,57 +235,57 @@ partial class MainForm
         dtpTo.Format = DateTimePickerFormat.Custom;
         dtpTo.CustomFormat = "yyyy-MM-dd";
         dtpTo.Location = new Point(52, 38);
-        dtpTo.Size = new Size(280, 23);
+        dtpTo.Size = new Size(308, 23);
         dtpTo.Value = DateTime.Today;
 
         btnCreateSummary.Location = new Point(8, 70);
-        btnCreateSummary.Size = new Size(334, 32);
+        btnCreateSummary.Size = new Size(356, 32);
         btnCreateSummary.Text = "Create Summary";
         btnCreateSummary.Click += btnCreateSummary_Click;
 
-        // grpQuickSelect — 4 columns, 2 rows, 76px per button, 4px gap
-        btnToday.Location = new Point(8, 22);
+        // grpQuickSelect — 4 columns, 2 rows, 76px per button, 10px gaps, 10px left/right margin
+        btnToday.Location = new Point(10, 22);
         btnToday.Size = new Size(76, 28);
         btnToday.Text = "Today";
         btnToday.Click += btnToday_Click;
 
-        btnYesterday.Location = new Point(88, 22);
+        btnYesterday.Location = new Point(96, 22);
         btnYesterday.Size = new Size(76, 28);
         btnYesterday.Text = "Yesterday";
         btnYesterday.Click += btnYesterday_Click;
 
-        btnThisWeek.Location = new Point(168, 22);
+        btnThisWeek.Location = new Point(182, 22);
         btnThisWeek.Size = new Size(76, 28);
         btnThisWeek.Text = "This Week";
         btnThisWeek.Click += btnThisWeek_Click;
 
-        btnThisMonth.Location = new Point(248, 22);
+        btnThisMonth.Location = new Point(268, 22);
         btnThisMonth.Size = new Size(76, 28);
         btnThisMonth.Text = "This Month";
         btnThisMonth.Click += btnThisMonth_Click;
 
-        btnLastWeek.Location = new Point(8, 56);
+        btnLastWeek.Location = new Point(10, 56);
         btnLastWeek.Size = new Size(76, 28);
         btnLastWeek.Text = "Last Week";
         btnLastWeek.Click += btnLastWeek_Click;
 
-        btnLastMonth.Location = new Point(88, 56);
+        btnLastMonth.Location = new Point(96, 56);
         btnLastMonth.Size = new Size(76, 28);
         btnLastMonth.Text = "Last Month";
         btnLastMonth.Click += btnLastMonth_Click;
 
-        btnThisYear.Location = new Point(168, 56);
+        btnThisYear.Location = new Point(182, 56);
         btnThisYear.Size = new Size(76, 28);
         btnThisYear.Text = "This Year";
         btnThisYear.Click += btnThisYear_Click;
 
-        btnLastYear.Location = new Point(248, 56);
+        btnLastYear.Location = new Point(268, 56);
         btnLastYear.Size = new Size(76, 28);
         btnLastYear.Text = "Last Year";
         btnLastYear.Click += btnLastYear_Click;
 
         grpQuickSelect.Location = new Point(8, 112);
-        grpQuickSelect.Size = new Size(334, 96);
+        grpQuickSelect.Size = new Size(356, 96);
         grpQuickSelect.Text = "Quick select";
         grpQuickSelect.Controls.AddRange(new Control[] {
             btnToday, btnYesterday, btnThisWeek, btnThisMonth,
@@ -310,7 +310,7 @@ partial class MainForm
 
         // ── Form ─────────────────────────────────────────────────
 
-        ClientSize = new Size(356, 252);
+        ClientSize = new Size(380, 280);
         Controls.Add(tabControl);
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
