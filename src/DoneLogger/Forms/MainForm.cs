@@ -38,6 +38,10 @@ public partial class MainForm : Form
         btnStartWork.Enabled = !tracking;
         btnStopWork.Enabled = tracking;
         cboCategory.Enabled = !tracking;
+        btnStartWorkAdv.Enabled = !tracking;
+        txtStartTime.Enabled = !tracking;
+        btnStopWorkAdv.Enabled = tracking;
+        txtStopTime.Enabled = tracking;
 
         if (tracking && state != null)
         {
@@ -146,5 +150,66 @@ public partial class MainForm : Form
         {
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+    }
+
+    private void btnStartWorkAdv_Click(object? sender, EventArgs e)
+    {
+        if (!TryParseTime(txtStartTime.Text, out DateTime customTime))
+        {
+            MessageBox.Show("Enter a valid time in HH:mm format.", "Invalid Time",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+        try
+        {
+            if (!_logService.LogExists(customTime.Date))
+                _logService.CreateLog(customTime.Date);
+
+            string category = cboCategory.SelectedItem?.ToString() ?? _config.Categories[0].Name;
+            _trackingService.StartTracking(category, customTime);
+            txtStartTime.Text = string.Empty;
+            RefreshState();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void btnStopWorkAdv_Click(object? sender, EventArgs e)
+    {
+        if (!TryParseTime(txtStopTime.Text, out DateTime customTime))
+        {
+            MessageBox.Show("Enter a valid time in HH:mm format.", "Invalid Time",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+        try
+        {
+            string? midnightMessage = _trackingService.StopTracking(customTime);
+            txtStopTime.Text = string.Empty;
+            RefreshState();
+
+            if (midnightMessage != null)
+                MessageBox.Show(midnightMessage, "Midnight Crossing",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private static bool TryParseTime(string text, out DateTime result)
+    {
+        if (DateTime.TryParseExact(text.Trim(), "HH:mm",
+            System.Globalization.CultureInfo.InvariantCulture,
+            System.Globalization.DateTimeStyles.None, out var time))
+        {
+            result = DateTime.Today.Add(time.TimeOfDay);
+            return true;
+        }
+        result = default;
+        return false;
     }
 }

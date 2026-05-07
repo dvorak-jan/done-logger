@@ -31,23 +31,23 @@ public class TimeTrackingService
         }
     }
 
-    public void StartTracking(string category)
+    public void StartTracking(string category, DateTime? customTime = null)
     {
         var state = new TrackingState
         {
             Active = true,
-            StartTime = DateTime.Now,
+            StartTime = customTime ?? DateTime.Now,
             Category = category
         };
         File.WriteAllText(StatePath, JsonSerializer.Serialize(state, JsonOpts));
     }
 
     // Returns a message to show the user when midnight was crossed, null otherwise.
-    public string? StopTracking()
+    public string? StopTracking(DateTime? customStopTime = null)
     {
         var state = LoadState() ?? throw new InvalidOperationException("No active tracking session.");
 
-        DateTime stopTime = DateTime.Now;
+        DateTime stopTime = customStopTime ?? DateTime.Now;
         DateTime startTime = state.StartTime;
         string? midnightMessage = null;
 

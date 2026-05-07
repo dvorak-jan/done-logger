@@ -20,6 +20,13 @@ partial class MainForm
 
     // Advanced tab
     private Button btnCreateLog = null!;
+    private GroupBox grpCustomTime = null!;
+    private Label lblStartTimeLabel = null!;
+    private TextBox txtStartTime = null!;
+    private Button btnStartWorkAdv = null!;
+    private Label lblStopTimeLabel = null!;
+    private TextBox txtStopTime = null!;
+    private Button btnStopWorkAdv = null!;
 
     private System.Windows.Forms.Timer timerElapsed = null!;
 
@@ -47,10 +54,18 @@ partial class MainForm
         btnStopWork = new Button();
 
         btnCreateLog = new Button();
+        grpCustomTime = new GroupBox();
+        lblStartTimeLabel = new Label();
+        txtStartTime = new TextBox();
+        btnStartWorkAdv = new Button();
+        lblStopTimeLabel = new Label();
+        txtStopTime = new TextBox();
+        btnStopWorkAdv = new Button();
 
         timerElapsed = new System.Windows.Forms.Timer(components);
 
         SuspendLayout();
+        grpCustomTime.SuspendLayout();
         tabMain.SuspendLayout();
         tabAdvanced.SuspendLayout();
         tabControl.SuspendLayout();
@@ -103,7 +118,42 @@ partial class MainForm
         btnCreateLog.Text = "Create New Log";
         btnCreateLog.Click += btnCreateLog_Click;
 
-        tabAdvanced.Controls.Add(btnCreateLog);
+        // grpCustomTime
+        lblStartTimeLabel.AutoSize = true;
+        lblStartTimeLabel.Location = new Point(8, 22);
+        lblStartTimeLabel.Text = "Start (HH:mm):";
+
+        txtStartTime.Location = new Point(110, 19);
+        txtStartTime.Size = new Size(58, 23);
+        txtStartTime.MaxLength = 5;
+
+        btnStartWorkAdv.Location = new Point(178, 16);
+        btnStartWorkAdv.Size = new Size(148, 32);
+        btnStartWorkAdv.Text = "Start Work";
+        btnStartWorkAdv.Click += btnStartWorkAdv_Click;
+
+        lblStopTimeLabel.AutoSize = true;
+        lblStopTimeLabel.Location = new Point(8, 58);
+        lblStopTimeLabel.Text = "Stop (HH:mm):";
+
+        txtStopTime.Location = new Point(110, 55);
+        txtStopTime.Size = new Size(58, 23);
+        txtStopTime.MaxLength = 5;
+
+        btnStopWorkAdv.Location = new Point(178, 52);
+        btnStopWorkAdv.Size = new Size(148, 32);
+        btnStopWorkAdv.Text = "Stop Work";
+        btnStopWorkAdv.Click += btnStopWorkAdv_Click;
+
+        grpCustomTime.Location = new Point(8, 48);
+        grpCustomTime.Size = new Size(334, 96);
+        grpCustomTime.Text = "Custom time";
+        grpCustomTime.Controls.AddRange(new Control[] {
+            lblStartTimeLabel, txtStartTime, btnStartWorkAdv,
+            lblStopTimeLabel, txtStopTime, btnStopWorkAdv
+        });
+
+        tabAdvanced.Controls.AddRange(new Control[] { btnCreateLog, grpCustomTime });
         tabAdvanced.Text = "Advanced";
 
         // ── TabControl ───────────────────────────────────────────
@@ -126,6 +176,8 @@ partial class MainForm
         StartPosition = FormStartPosition.CenterScreen;
         Text = "done-logger";
 
+        grpCustomTime.ResumeLayout(false);
+        grpCustomTime.PerformLayout();
         tabMain.ResumeLayout(false);
         tabMain.PerformLayout();
         tabAdvanced.ResumeLayout(false);
