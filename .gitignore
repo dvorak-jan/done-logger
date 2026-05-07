@@ -1,0 +1,18 @@
+# Build outputs
+src/DoneLogger/bin/
+src/DoneLogger/obj/
+
+# Publish output
+publish/
+
+# User-specific Visual Studio files
+*.user
+.vs/
+
+# Runtime files (not for version control)
+src/DoneLogger/config.json
+state.json
+config.json
+
+# Claude settings
+.claude/

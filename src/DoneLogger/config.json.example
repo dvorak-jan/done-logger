@@ -1,0 +1,8 @@
+{
+  "dataRoot": "C:\\Users\\YourName\\Documents\\done-logger-data",
+  "editor": "C:\\Windows\\System32\\notepad.exe",
+  "categories": [
+    { "name": "My Project", "isDefault": true },
+    { "name": "Admin" }
+  ]
+}
