@@ -1,0 +1,106 @@
+namespace DoneLogger.Services;
+
+using DoneLogger.Models;
+using System.Text;
+using System.Text.RegularExpressions;
+
+public class SummaryService
+{
+    private static readonly string SummaryPath =
+        Path.Combine(AppContext.BaseDirectory, "summary.md");
+
+    private static readonly Regex TimeEntryPattern = new(@"^- \d+h\d{2}m$", RegexOptions.Compiled);
+    private static readonly Regex TimeValuePattern = new(@"- (\d+)h(\d{2})m", RegexOptions.Compiled);
+
+    private readonly LogService _logService;
+    private readonly AppConfig _config;
+
+    public SummaryService(LogService logService, AppConfig config)
+    {
+        _logService = logService;
+        _config = config;
+    }
+
+    public string GenerateSummary(DateTime from, DateTime to)
+    {
+        var dates = _logService.GetAllLogDates()
+            .Where(d => d.Date >= from.Date && d.Date <= to.Date)
+            .OrderBy(d => d)
+            .ToList();
+
+        var whatIDidItems = new List<string>();
+        var categoryMinutes = new Dictionary<string, int>();
+
+        foreach (var date in dates)
+            ParseLog(_logService.GetLogPath(date), whatIDidItems, categoryMinutes);
+
+        var sb = new StringBuilder();
+        sb.AppendLine($"# Summary for the period from {from:yyyy-MM-dd} to {to:yyyy-MM-dd}");
+        sb.AppendLine();
+        sb.AppendLine("## What I did");
+        foreach (var item in whatIDidItems)
+            sb.AppendLine(item);
+        sb.AppendLine();
+
+        int totalMinutes = 0;
+        foreach (var cat in _config.Categories)
+        {
+            if (categoryMinutes.TryGetValue(cat.Name, out int mins) && mins > 0)
+            {
+                sb.AppendLine($"## {cat.Name}");
+                sb.AppendLine($"- {FormatTime(mins)}");
+                sb.AppendLine();
+                totalMinutes += mins;
+            }
+        }
+
+        sb.AppendLine("## Total");
+        sb.AppendLine($"- {FormatTime(totalMinutes)}");
+
+        File.WriteAllText(SummaryPath, sb.ToString().TrimEnd() + Environment.NewLine, Encoding.UTF8);
+        return SummaryPath;
+    }
+
+    private static void ParseLog(string path, List<string> whatIDidItems, Dictionary<string, int> categoryMinutes)
+    {
+        string? currentSection = null;
+
+        foreach (var line in File.ReadLines(path))
+        {
+            if (line.StartsWith("# ")) continue;
+
+            if (line.StartsWith("## "))
+            {
+                currentSection = line[3..].Trim();
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(line)) continue;
+
+            if (currentSection == "What I did" && line.StartsWith("- ") && !TimeEntryPattern.IsMatch(line.Trim()))
+            {
+                whatIDidItems.Add(line);
+            }
+            else if (currentSection != null
+                     && currentSection != "What I did"
+                     && currentSection != "What is next"
+                     && TimeEntryPattern.IsMatch(line.Trim()))
+            {
+                var match = TimeValuePattern.Match(line.Trim());
+                if (match.Success)
+                {
+                    int mins = int.Parse(match.Groups[1].Value) * 60 + int.Parse(match.Groups[2].Value);
+                    categoryMinutes.TryGetValue(currentSection, out int existing);
+                    categoryMinutes[currentSection] = existing + mins;
+                }
+            }
+        }
+    }
+
+    private static string FormatTime(int totalMinutes)
+    {
+        int h = totalMinutes / 60;
+        int m = totalMinutes % 60;
+        return $"{h}h{m:D2}m";
+    }
+}

@@ -8,6 +8,7 @@ partial class MainForm
     private TabControl tabControl = null!;
     private TabPage tabMain = null!;
     private TabPage tabAdvanced = null!;
+    private TabPage tabSummary = null!;
 
     // Main tab
     private Label lblStatus = null!;
@@ -31,6 +32,22 @@ partial class MainForm
     private ComboBox cboLogDate = null!;
     private Button btnOpenLogDate = null!;
 
+    // Summary tab
+    private Label lblFrom = null!;
+    private DateTimePicker dtpFrom = null!;
+    private Label lblTo = null!;
+    private DateTimePicker dtpTo = null!;
+    private Button btnCreateSummary = null!;
+    private GroupBox grpQuickSelect = null!;
+    private Button btnToday = null!;
+    private Button btnYesterday = null!;
+    private Button btnThisWeek = null!;
+    private Button btnThisMonth = null!;
+    private Button btnLastWeek = null!;
+    private Button btnLastMonth = null!;
+    private Button btnThisYear = null!;
+    private Button btnLastYear = null!;
+
     private System.Windows.Forms.Timer timerElapsed = null!;
 
     protected override void Dispose(bool disposing)
@@ -47,6 +64,7 @@ partial class MainForm
         tabControl = new TabControl();
         tabMain = new TabPage();
         tabAdvanced = new TabPage();
+        tabSummary = new TabPage();
 
         lblStatus = new Label();
         lblElapsed = new Label();
@@ -68,13 +86,30 @@ partial class MainForm
         cboLogDate = new ComboBox();
         btnOpenLogDate = new Button();
 
+        lblFrom = new Label();
+        dtpFrom = new DateTimePicker();
+        lblTo = new Label();
+        dtpTo = new DateTimePicker();
+        btnCreateSummary = new Button();
+        grpQuickSelect = new GroupBox();
+        btnToday = new Button();
+        btnYesterday = new Button();
+        btnThisWeek = new Button();
+        btnThisMonth = new Button();
+        btnLastWeek = new Button();
+        btnLastMonth = new Button();
+        btnThisYear = new Button();
+        btnLastYear = new Button();
+
         timerElapsed = new System.Windows.Forms.Timer(components);
 
         SuspendLayout();
         grpCustomTime.SuspendLayout();
         grpOpenLog.SuspendLayout();
+        grpQuickSelect.SuspendLayout();
         tabMain.SuspendLayout();
         tabAdvanced.SuspendLayout();
+        tabSummary.SuspendLayout();
         tabControl.SuspendLayout();
 
         // ── Main tab ──────────────────────────────────────────────
@@ -181,10 +216,91 @@ partial class MainForm
         });
         tabAdvanced.Text = "Advanced";
 
+        // ── Summary tab ───────────────────────────────────────────
+
+        lblFrom.AutoSize = true;
+        lblFrom.Location = new Point(8, 12);
+        lblFrom.Text = "From:";
+
+        dtpFrom.Format = DateTimePickerFormat.Custom;
+        dtpFrom.CustomFormat = "yyyy-MM-dd";
+        dtpFrom.Location = new Point(52, 8);
+        dtpFrom.Size = new Size(280, 23);
+        dtpFrom.Value = DateTime.Today;
+
+        lblTo.AutoSize = true;
+        lblTo.Location = new Point(8, 42);
+        lblTo.Text = "To:";
+
+        dtpTo.Format = DateTimePickerFormat.Custom;
+        dtpTo.CustomFormat = "yyyy-MM-dd";
+        dtpTo.Location = new Point(52, 38);
+        dtpTo.Size = new Size(280, 23);
+        dtpTo.Value = DateTime.Today;
+
+        btnCreateSummary.Location = new Point(8, 70);
+        btnCreateSummary.Size = new Size(334, 32);
+        btnCreateSummary.Text = "Create Summary";
+        btnCreateSummary.Click += btnCreateSummary_Click;
+
+        // grpQuickSelect — 4 columns, 2 rows, 76px per button, 4px gap
+        btnToday.Location = new Point(8, 22);
+        btnToday.Size = new Size(76, 28);
+        btnToday.Text = "Today";
+        btnToday.Click += btnToday_Click;
+
+        btnYesterday.Location = new Point(88, 22);
+        btnYesterday.Size = new Size(76, 28);
+        btnYesterday.Text = "Yesterday";
+        btnYesterday.Click += btnYesterday_Click;
+
+        btnThisWeek.Location = new Point(168, 22);
+        btnThisWeek.Size = new Size(76, 28);
+        btnThisWeek.Text = "This Week";
+        btnThisWeek.Click += btnThisWeek_Click;
+
+        btnThisMonth.Location = new Point(248, 22);
+        btnThisMonth.Size = new Size(76, 28);
+        btnThisMonth.Text = "This Month";
+        btnThisMonth.Click += btnThisMonth_Click;
+
+        btnLastWeek.Location = new Point(8, 56);
+        btnLastWeek.Size = new Size(76, 28);
+        btnLastWeek.Text = "Last Week";
+        btnLastWeek.Click += btnLastWeek_Click;
+
+        btnLastMonth.Location = new Point(88, 56);
+        btnLastMonth.Size = new Size(76, 28);
+        btnLastMonth.Text = "Last Month";
+        btnLastMonth.Click += btnLastMonth_Click;
+
+        btnThisYear.Location = new Point(168, 56);
+        btnThisYear.Size = new Size(76, 28);
+        btnThisYear.Text = "This Year";
+        btnThisYear.Click += btnThisYear_Click;
+
+        btnLastYear.Location = new Point(248, 56);
+        btnLastYear.Size = new Size(76, 28);
+        btnLastYear.Text = "Last Year";
+        btnLastYear.Click += btnLastYear_Click;
+
+        grpQuickSelect.Location = new Point(8, 112);
+        grpQuickSelect.Size = new Size(334, 96);
+        grpQuickSelect.Text = "Quick select";
+        grpQuickSelect.Controls.AddRange(new Control[] {
+            btnToday, btnYesterday, btnThisWeek, btnThisMonth,
+            btnLastWeek, btnLastMonth, btnThisYear, btnLastYear
+        });
+
+        tabSummary.Controls.AddRange(new Control[] {
+            lblFrom, dtpFrom, lblTo, dtpTo, btnCreateSummary, grpQuickSelect
+        });
+        tabSummary.Text = "Summary";
+
         // ── TabControl ───────────────────────────────────────────
 
         tabControl.Dock = DockStyle.Fill;
-        tabControl.Controls.AddRange(new TabPage[] { tabMain, tabAdvanced });
+        tabControl.Controls.AddRange(new TabPage[] { tabMain, tabAdvanced, tabSummary });
         tabControl.Selected += tabControl_Selected;
 
         // ── Timer ────────────────────────────────────────────────
@@ -204,9 +320,11 @@ partial class MainForm
         grpCustomTime.ResumeLayout(false);
         grpCustomTime.PerformLayout();
         grpOpenLog.ResumeLayout(false);
+        grpQuickSelect.ResumeLayout(false);
         tabMain.ResumeLayout(false);
         tabMain.PerformLayout();
         tabAdvanced.ResumeLayout(false);
+        tabSummary.ResumeLayout(false);
         tabControl.ResumeLayout(false);
         ResumeLayout(false);
         PerformLayout();

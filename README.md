@@ -62,6 +62,15 @@ A running session survives application restarts — the state is saved in `state
 
 **Open log by date** — select any date from the dropdown (only dates with an existing log file are listed) and click **Open Log** to open it in the configured editor.
 
+### Summary tab
+
+Generates a Markdown summary for a chosen date range and opens it in the configured editor.
+
+- Set the **From** and **To** dates manually and click **Create Summary**, or use one of the quick-select buttons: **Today**, **Yesterday**, **This Week**, **This Month**, **Last Week**, **Last Month**, **This Year**, **Last Year**.
+- Quick-select buttons are disabled when no log data exists for that period.
+- The summary aggregates all **What I did** items from each day in the range, shows time totals per category, and adds an overall **Total**.
+- The output is written to `summary.md` in the same folder as the executable, overwriting any previous summary.
+
 ---
 
 ## Data format
