@@ -66,6 +66,8 @@ public partial class MainForm : Form
             UpdateElapsed(state.StartTime);
     }
 
+    private void tabControl_Selected(object? sender, TabControlEventArgs e) { }
+
     private void btnCreateLog_Click(object? sender, EventArgs e)
     {
         try
