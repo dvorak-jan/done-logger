@@ -40,23 +40,27 @@ Create `config.json` in the same folder as the executable. Use this template:
 
 ## Usage
 
-### Create New Log
+The application has two tabs: **Work** for everyday use and **Advanced** for less frequent operations.
 
-Creates today's log file (`YYYY-MM-DD.md`). Any items in the **What is next** section of the previous log are carried forward into the new one, and removed from the old one.
+### Work tab
 
-### Edit Latest Log
+**Edit Latest Log** — opens the most recent log file in the configured text editor.
 
-Opens the most recent log file in the configured text editor.
-
-### Start Work / Stop Work
-
-Tracks time against the selected category. The elapsed timer is shown while a session is active.
+**Start Work / Stop Work** — tracks time against the selected category. The elapsed timer is shown while a session is active.
 
 - Time is rounded to the nearest 5 minutes.
 - If you forget to stop before midnight, the session is automatically split: time before midnight is written to the previous day's log, and time after midnight to the new day's.
 - If no log exists for today when you click **Start Work**, one is created automatically.
 
 A running session survives application restarts — the state is saved in `state.json` alongside the executable.
+
+### Advanced tab
+
+**Create New Log** — creates today's log file (`YYYY-MM-DD.md`). Any items in the **What is next** section of the previous log are carried forward into the new one, and removed from the old one. (This also happens automatically when **Start Work** finds no log for today.)
+
+**Custom time** — enter a time in `HH:mm` format and use the **Start Work** / **Stop Work** buttons here to record a session that started or ended at a specific time rather than the current moment. Useful for logging work retrospectively or in advance.
+
+**Open log by date** — select any date from the dropdown (only dates with an existing log file are listed) and click **Open Log** to open it in the configured editor.
 
 ---
 
