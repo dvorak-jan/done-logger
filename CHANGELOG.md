@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2] - unreleased
+
+### Added
+- Advanced tab on the main window to host infrequently used and power-user controls
+- Custom start and stop times — enter any `HH:mm` time on the Advanced tab to record work sessions retrospectively or in advance
+- Open any existing daily log by selecting a date on the Advanced tab; only dates with an actual log file are listed
+
+### Changed
+- "Create New Log" button moved to the Advanced tab
+
 ## [0.1] - 2026-05-07
 
 ### Added
