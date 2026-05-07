@@ -310,6 +310,8 @@ partial class MainForm
 
         // ── Form ─────────────────────────────────────────────────
 
+        AutoScaleDimensions = new SizeF(96F, 96F);
+        AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(380, 280);
         Controls.Add(tabControl);
         FormBorderStyle = FormBorderStyle.FixedSingle;
