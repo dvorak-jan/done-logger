@@ -40,7 +40,7 @@ Create `config.json` in the same folder as the executable. Use this template:
 
 ## Usage
 
-The application has two tabs: **Work** for everyday use and **Advanced** for less frequent operations.
+The application has three tabs: **Work** for everyday use, **Advanced** for less frequent operations, and **Summary** for aggregating logs for user-defined period.
 
 ### Work tab
 
