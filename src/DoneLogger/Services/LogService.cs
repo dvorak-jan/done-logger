@@ -19,6 +19,19 @@ public class LogService
 
     public bool LogExists(DateTime date) => File.Exists(GetLogPath(date));
 
+    public IReadOnlyList<DateTime> GetAllLogDates()
+    {
+        if (!Directory.Exists(_config.DataRoot)) return Array.Empty<DateTime>();
+
+        return Directory
+            .GetFiles(_config.DataRoot, "*.md", SearchOption.AllDirectories)
+            .Where(f => LogFileNamePattern.IsMatch(Path.GetFileName(f)))
+            .Select(f => DateTime.ParseExact(Path.GetFileNameWithoutExtension(f), "yyyy-MM-dd",
+                System.Globalization.CultureInfo.InvariantCulture))
+            .OrderByDescending(d => d)
+            .ToList();
+    }
+
     public string? FindMostRecentLogPath()
     {
         if (!Directory.Exists(_config.DataRoot)) return null;

@@ -15,7 +15,8 @@ static class Program
             var config = ConfigService.Load();
             var logService = new LogService(config);
             var trackingService = new TimeTrackingService(logService);
-            Application.Run(new MainForm(config, logService, trackingService));
+            var summaryService = new SummaryService(logService, config);
+            Application.Run(new MainForm(config, logService, trackingService, summaryService));
         }
         catch (Exception ex)
         {
