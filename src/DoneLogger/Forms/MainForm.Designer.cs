@@ -22,6 +22,8 @@ partial class MainForm
     // Advanced tab
     private Button btnCreateLog = null!;
     private GroupBox grpCustomTime = null!;
+    private Label lblAdvCategoryLabel = null!;
+    private ComboBox cboAdvCategory = null!;
     private Label lblStartTimeLabel = null!;
     private TextBox txtStartTime = null!;
     private Button btnStartWorkAdv = null!;
@@ -76,6 +78,8 @@ partial class MainForm
 
         btnCreateLog = new Button();
         grpCustomTime = new GroupBox();
+        lblAdvCategoryLabel = new Label();
+        cboAdvCategory = new ComboBox();
         lblStartTimeLabel = new Label();
         txtStartTime = new TextBox();
         btnStartWorkAdv = new Button();
@@ -161,36 +165,45 @@ partial class MainForm
         btnCreateLog.Click += btnCreateLog_Click;
 
         // grpCustomTime
+        lblAdvCategoryLabel.AutoSize = true;
+        lblAdvCategoryLabel.Location = new Point(8, 24);
+        lblAdvCategoryLabel.Text = "Category:";
+
+        cboAdvCategory.DropDownStyle = ComboBoxStyle.DropDownList;
+        cboAdvCategory.Location = new Point(80, 20);
+        cboAdvCategory.Size = new Size(268, 23);
+
         lblStartTimeLabel.AutoSize = true;
-        lblStartTimeLabel.Location = new Point(8, 22);
+        lblStartTimeLabel.Location = new Point(8, 58);
         lblStartTimeLabel.Text = "Start (HH:mm):";
 
-        txtStartTime.Location = new Point(110, 19);
+        txtStartTime.Location = new Point(110, 55);
         txtStartTime.Size = new Size(58, 23);
         txtStartTime.MaxLength = 5;
 
-        btnStartWorkAdv.Location = new Point(178, 16);
+        btnStartWorkAdv.Location = new Point(178, 52);
         btnStartWorkAdv.Size = new Size(170, 32);
         btnStartWorkAdv.Text = "Start Work";
         btnStartWorkAdv.Click += btnStartWorkAdv_Click;
 
         lblStopTimeLabel.AutoSize = true;
-        lblStopTimeLabel.Location = new Point(8, 58);
+        lblStopTimeLabel.Location = new Point(8, 94);
         lblStopTimeLabel.Text = "Stop (HH:mm):";
 
-        txtStopTime.Location = new Point(110, 55);
+        txtStopTime.Location = new Point(110, 91);
         txtStopTime.Size = new Size(58, 23);
         txtStopTime.MaxLength = 5;
 
-        btnStopWorkAdv.Location = new Point(178, 52);
+        btnStopWorkAdv.Location = new Point(178, 88);
         btnStopWorkAdv.Size = new Size(170, 32);
         btnStopWorkAdv.Text = "Stop Work";
         btnStopWorkAdv.Click += btnStopWorkAdv_Click;
 
         grpCustomTime.Location = new Point(8, 48);
-        grpCustomTime.Size = new Size(356, 96);
+        grpCustomTime.Size = new Size(356, 132);
         grpCustomTime.Text = "Custom time";
         grpCustomTime.Controls.AddRange(new Control[] {
+            lblAdvCategoryLabel, cboAdvCategory,
             lblStartTimeLabel, txtStartTime, btnStartWorkAdv,
             lblStopTimeLabel, txtStopTime, btnStopWorkAdv
         });
@@ -206,7 +219,7 @@ partial class MainForm
         btnOpenLogDate.Text = "Open Log";
         btnOpenLogDate.Click += btnOpenLogDate_Click;
 
-        grpOpenLog.Location = new Point(8, 152);
+        grpOpenLog.Location = new Point(8, 188);
         grpOpenLog.Size = new Size(356, 62);
         grpOpenLog.Text = "Open log by date";
         grpOpenLog.Controls.AddRange(new Control[] { cboLogDate, btnOpenLogDate });
