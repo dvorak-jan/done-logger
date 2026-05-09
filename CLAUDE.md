@@ -73,3 +73,43 @@ The file format and folder hierarchy are a public interface — external tools (
 - **No network.** The app must function with no internet or intranet access.
 - **No installation.** Runs as a self-contained executable; no runtime on the target machine required.
 - **Data locality.** All data stays on the local machine.
+
+# Claude Code Instructions
+
+## Workflow: Implementing GitHub Issues
+
+When asked to "implement new gh issues" or similar, follow this workflow for each open, unassigned issue — one at a time, in order of issue number.
+
+### Per-issue process
+
+1. **Understand the problem**
+   - Read the issue title, body, and all comments carefully
+   - If anything is ambiguous or underspecified, ask clarifying questions *before* writing any code
+   - Do not proceed to implementation until the requirements are clear
+
+2. **Implement**
+   - Make all necessary code changes
+   - Follow the existing code style and conventions in the repo
+   - Keep the scope tight — only what the issue asks for
+
+3. **Update CHANGELOG.md**
+   - Add an entry under the appropriate section (e.g. `## Unreleased`)
+   - Format: `- <Brief description>`
+
+4. **Update README.md if needed**
+   - Update only if the issue changes user-facing behavior, API, or setup steps
+   - Skip if the change is internal only
+
+5. **Commit**
+   - Stage all changed files
+   - Commit message format:
+   ` <short imperative summary> (issue #<issue_number>)
+     <one or two sentences explaining what was done and why>
+   `
+   - Example: `Add retry logic for failed connections (issue #42)`
+
+### Rules
+- **One issue = one commit.** Never bundle multiple issues into one commit.
+- **No PRs.** Commit directly to the current branch.
+- **No closing issues** via commit message keywords (`fixes`, `closes`, etc.) or the GitHub API.
+- After finishing one issue, pause and confirm before moving to the next — unless told to process all of them in one go.
