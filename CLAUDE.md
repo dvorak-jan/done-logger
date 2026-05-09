@@ -96,20 +96,28 @@ When asked to "implement new gh issues" or similar, follow this workflow for eac
    - Add an entry under the appropriate section (e.g. `## Unreleased`)
    - Format: `- <Brief description>`
 
-4. **Update README.md if needed**
-   - Update only if the issue changes user-facing behavior, API, or setup steps
-   - Skip if the change is internal only
+4. **Update README.md**
+   - **Always search README.md for any UI labels, button names, or terminology that the issue changes.**
+   - Update any references that are now stale (e.g. a renamed button, a removed option, a new feature that is documented).
+   - Skip only if the issue is purely internal with zero user-visible changes.
 
 5. **Commit**
    - Stage all changed files
-   - Commit message format:
-   ` <short imperative summary> (issue #<issue_number>)
-     <one or two sentences explaining what was done and why>
-   `
-   - Example: `Add retry logic for failed connections (issue #42)`
+   - Commit message format: `<prefix>: <short lowercase summary> (issue #<issue_number>)`
+     followed by a blank line and one or two sentences explaining what was done and why.
+   - Prefix must be one of: `feat:`, `fix:`, `chore:`, `refactor:`, `docs:`
+   - The summary after the prefix must start with a lowercase letter.
+   - Example: `feat: add retry logic for failed connections (issue #42)`
 
 ### Rules
 - **One issue = one commit.** Never bundle multiple issues into one commit.
 - **No PRs.** Commit directly to the current branch.
 - **No closing issues** via commit message keywords (`fixes`, `closes`, etc.) or the GitHub API.
 - After finishing one issue, pause and confirm before moving to the next — unless told to process all of them in one go.
+
+### After all issues are done
+- Run a fresh publish build into `./publish`:
+  ```bash
+  cd src/DoneLogger
+  dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ../../publish
+  ```
