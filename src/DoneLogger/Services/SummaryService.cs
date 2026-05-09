@@ -14,11 +14,13 @@ public class SummaryService
 
     private readonly LogService _logService;
     private readonly AppConfig _config;
+    private readonly TimeTrackingService _trackingService;
 
-    public SummaryService(LogService logService, AppConfig config)
+    public SummaryService(LogService logService, AppConfig config, TimeTrackingService trackingService)
     {
         _logService = logService;
         _config = config;
+        _trackingService = trackingService;
     }
 
     public string GenerateSummary(DateTime from, DateTime to)
@@ -33,6 +35,23 @@ public class SummaryService
 
         foreach (var date in dates)
             ParseLog(_logService.GetLogPath(date), whatIDidItems, categoryMinutes);
+
+        if (to.Date >= DateTime.Today)
+        {
+            var state = _trackingService.LoadState();
+            if (state?.Active == true && state.StartTime.Date <= DateTime.Today)
+            {
+                DateTime sessionStart = state.StartTime.Date < DateTime.Today
+                    ? DateTime.Today
+                    : state.StartTime;
+                int liveMinutes = RoundToFiveMinutes((DateTime.Now - sessionStart).TotalMinutes);
+                if (liveMinutes > 0)
+                {
+                    categoryMinutes.TryGetValue(state.Category, out int existing);
+                    categoryMinutes[state.Category] = existing + liveMinutes;
+                }
+            }
+        }
 
         var sb = new StringBuilder();
         sb.AppendLine($"# Summary for the period from {from:yyyy-MM-dd} to {to:yyyy-MM-dd}");
@@ -96,6 +115,9 @@ public class SummaryService
             }
         }
     }
+
+    private static int RoundToFiveMinutes(double totalMinutes) =>
+        (int)Math.Round(totalMinutes / 5.0, MidpointRounding.AwayFromZero) * 5;
 
     private static string FormatTime(int totalMinutes)
     {

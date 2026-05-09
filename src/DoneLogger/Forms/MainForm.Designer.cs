@@ -253,7 +253,7 @@ partial class MainForm
 
         btnCreateSummary.Location = new Point(8, 70);
         btnCreateSummary.Size = new Size(356, 32);
-        btnCreateSummary.Text = "Create Summary";
+        btnCreateSummary.Text = "Generate Summary";
         btnCreateSummary.Click += btnCreateSummary_Click;
 
         // grpQuickSelect — 4 columns, 2 rows, 76px per button, 10px gaps, 10px left/right margin
