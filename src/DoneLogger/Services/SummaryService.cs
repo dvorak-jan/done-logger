@@ -34,7 +34,7 @@ public class SummaryService
         var categoryMinutes = new Dictionary<string, int>();
 
         foreach (var date in dates)
-            ParseLog(_logService.GetLogPath(date), whatIDidItems, categoryMinutes);
+            ParseLog(_logService.GetLogPath(date), date, whatIDidItems, categoryMinutes);
 
         if (to.Date >= DateTime.Today)
         {
@@ -80,7 +80,7 @@ public class SummaryService
         return SummaryPath;
     }
 
-    private static void ParseLog(string path, List<string> whatIDidItems, Dictionary<string, int> categoryMinutes)
+    private static void ParseLog(string path, DateTime date, List<string> whatIDidItems, Dictionary<string, int> categoryMinutes)
     {
         string? currentSection = null;
 
@@ -98,7 +98,7 @@ public class SummaryService
 
             if (currentSection == "What I did" && line.StartsWith("- ") && !TimeEntryPattern.IsMatch(line.Trim()))
             {
-                whatIDidItems.Add(line);
+                whatIDidItems.Add($"{line} [{date:yyyy-MM-dd}]");
             }
             else if (currentSection != null
                      && currentSection != "What I did"

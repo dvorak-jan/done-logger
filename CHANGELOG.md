@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Summaries that include today now incorporate the current in-progress work session (rounded to 5 minutes) so the live category and total times are accurate
 - Renamed "Create Summary" button to "Generate Summary"
+- Each "What I did" item in summaries now includes the source date in `[YYYY-MM-DD]` format
 
 ## [0.2] - 2026-05-08
 
