@@ -6,21 +6,20 @@ using System.Text.RegularExpressions;
 
 public class SummaryService
 {
-    private static readonly string SummaryPath =
-        Path.Combine(AppContext.BaseDirectory, "summary.md");
-
     private static readonly Regex TimeEntryPattern = new(@"^- \d+h\d{2}m$", RegexOptions.Compiled);
     private static readonly Regex TimeValuePattern = new(@"- (\d+)h(\d{2})m", RegexOptions.Compiled);
 
     private readonly LogService _logService;
     private readonly AppConfig _config;
     private readonly TimeTrackingService _trackingService;
+    private readonly string _summaryPath;
 
-    public SummaryService(LogService logService, AppConfig config, TimeTrackingService trackingService)
+    public SummaryService(LogService logService, AppConfig config, TimeTrackingService trackingService, string? baseDir = null)
     {
         _logService = logService;
         _config = config;
         _trackingService = trackingService;
+        _summaryPath = Path.Combine(baseDir ?? AppContext.BaseDirectory, "summary.md");
     }
 
     public string GenerateSummary(DateTime from, DateTime to)
@@ -76,8 +75,8 @@ public class SummaryService
         sb.AppendLine("## Total");
         sb.AppendLine($"- {FormatTime(totalMinutes)}");
 
-        File.WriteAllText(SummaryPath, sb.ToString().TrimEnd() + Environment.NewLine, Encoding.UTF8);
-        return SummaryPath;
+        File.WriteAllText(_summaryPath, sb.ToString().TrimEnd() + Environment.NewLine, Encoding.UTF8);
+        return _summaryPath;
     }
 
     private static void ParseLog(string path, DateTime date, List<string> whatIDidItems, Dictionary<string, int> categoryMinutes)
