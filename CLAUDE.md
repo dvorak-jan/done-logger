@@ -109,15 +109,15 @@ When asked to "implement new gh issues" or similar, follow this workflow for eac
    - The summary after the prefix must start with a lowercase letter.
    - Example: `feat: add retry logic for failed connections (issue #42)`
 
+6. **Publish build**
+   - After committing, run a fresh publish build into `./publish`:
+     ```bash
+     cd src/DoneLogger
+     dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ../../publish
+     ```
+
 ### Rules
 - **One issue = one commit.** Never bundle multiple issues into one commit.
 - **No PRs.** Commit directly to the current branch.
 - **No closing issues** via commit message keywords (`fixes`, `closes`, etc.) or the GitHub API.
 - After finishing one issue, pause and confirm before moving to the next — unless told to process all of them in one go.
-
-### After all issues are done
-- Run a fresh publish build into `./publish`:
-  ```bash
-  cd src/DoneLogger
-  dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ../../publish
-  ```
