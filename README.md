@@ -66,9 +66,10 @@ A running session survives application restarts — the state is saved in `state
 
 Generates a Markdown summary for a chosen date range and opens it in the configured editor.
 
-- Set the **From** and **To** dates manually and click **Create Summary**, or use one of the quick-select buttons: **Today**, **Yesterday**, **This Week**, **This Month**, **Last Week**, **Last Month**, **This Year**, **Last Year**.
+- Set the **From** and **To** dates manually and click **Generate Summary**, or use one of the quick-select buttons: **Today**, **Yesterday**, **This Week**, **This Month**, **Last Week**, **Last Month**, **This Year**, **Last Year**.
 - Quick-select buttons are disabled when no log data exists for that period.
-- The summary aggregates all **What I did** items from each day in the range, shows time totals per category, and adds an overall **Total**.
+- The summary aggregates all **What I did** items from each day in the range (each item is suffixed with its source date in `[YYYY-MM-DD]` format), shows time totals per category, and adds an overall **Total**.
+- If the respective period includes 'today' and a work is currently in progress (in state.json), the in-progress time is added to both the respective category and total.
 - The output is written to `summary.md` in the same folder as the executable, overwriting any previous summary.
 
 ---

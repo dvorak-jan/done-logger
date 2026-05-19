@@ -1,6 +1,6 @@
 # Build outputs
-src/DoneLogger/bin/
-src/DoneLogger/obj/
+src/**/bin/
+src/**/obj/
 
 # Publish output
 publish/

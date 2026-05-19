@@ -24,10 +24,15 @@ public partial class MainForm : Form
             Icon = new Icon(iconStream);
 
         foreach (var cat in config.Categories)
+        {
             cboCategory.Items.Add(cat.Name);
+            cboAdvCategory.Items.Add(cat.Name);
+        }
 
         var defaultCat = config.Categories.FirstOrDefault(c => c.IsDefault);
-        cboCategory.SelectedItem = defaultCat?.Name ?? config.Categories[0].Name;
+        string defaultName = defaultCat?.Name ?? config.Categories[0].Name;
+        cboCategory.SelectedItem = defaultName;
+        cboAdvCategory.SelectedItem = defaultName;
 
         cboLogDate.Format += (s, e) => { if (e.ListItem is DateTime d) e.Value = d.ToString("yyyy-MM-dd"); };
         RefreshLogDates();
@@ -43,6 +48,7 @@ public partial class MainForm : Form
         btnStartWork.Enabled = !tracking;
         btnStopWork.Enabled = tracking;
         cboCategory.Enabled = !tracking;
+        cboAdvCategory.Enabled = !tracking;
         btnStartWorkAdv.Enabled = !tracking;
         txtStartTime.Enabled = !tracking;
         btnStopWorkAdv.Enabled = tracking;
@@ -193,7 +199,7 @@ public partial class MainForm : Form
             if (!_logService.LogExists(customTime.Date))
                 _logService.CreateLog(customTime.Date);
 
-            string category = cboCategory.SelectedItem?.ToString() ?? _config.Categories[0].Name;
+            string category = cboAdvCategory.SelectedItem?.ToString() ?? _config.Categories[0].Name;
             _trackingService.StartTracking(category, customTime);
             txtStartTime.Text = string.Empty;
             RefreshState();

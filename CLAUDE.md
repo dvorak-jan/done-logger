@@ -73,3 +73,51 @@ The file format and folder hierarchy are a public interface — external tools (
 - **No network.** The app must function with no internet or intranet access.
 - **No installation.** Runs as a self-contained executable; no runtime on the target machine required.
 - **Data locality.** All data stays on the local machine.
+
+# Claude Code Instructions
+
+## Workflow: Implementing GitHub Issues
+
+When asked to "implement new gh issues" or similar, follow this workflow for each open, unassigned issue — one at a time, in order of issue number.
+
+### Per-issue process
+
+1. **Understand the problem**
+   - Read the issue title, body, and all comments carefully
+   - If anything is ambiguous or underspecified, ask clarifying questions *before* writing any code
+   - Do not proceed to implementation until the requirements are clear
+
+2. **Implement**
+   - Make all necessary code changes
+   - Follow the existing code style and conventions in the repo
+   - Keep the scope tight — only what the issue asks for
+
+3. **Update CHANGELOG.md**
+   - Add an entry under the appropriate section (e.g. `## Unreleased`)
+   - Format: `- <Brief description>`
+
+4. **Update README.md**
+   - **Always search README.md for any UI labels, button names, or terminology that the issue changes.**
+   - Update any references that are now stale (e.g. a renamed button, a removed option, a new feature that is documented).
+   - Skip only if the issue is purely internal with zero user-visible changes.
+
+5. **Commit**
+   - Stage all changed files
+   - Commit message format: `<prefix>: <short lowercase summary> (issue #<issue_number>)`
+     followed by a blank line and one or two sentences explaining what was done and why.
+   - Prefix must be one of: `feat:`, `fix:`, `chore:`, `refactor:`, `docs:`
+   - The summary after the prefix must start with a lowercase letter.
+   - Example: `feat: add retry logic for failed connections (issue #42)`
+
+6. **Publish build**
+   - After committing, run a fresh publish build into `./publish`:
+     ```bash
+     cd src/DoneLogger
+     dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ../../publish
+     ```
+
+### Rules
+- **One issue = one commit.** Never bundle multiple issues into one commit.
+- **No PRs.** Commit directly to the current branch.
+- **No closing issues** via commit message keywords (`fixes`, `closes`, etc.) or the GitHub API.
+- After finishing one issue, pause and confirm before moving to the next — unless told to process all of them in one go.

@@ -6,19 +6,20 @@ using System.Text.RegularExpressions;
 
 public class SummaryService
 {
-    private static readonly string SummaryPath =
-        Path.Combine(AppContext.BaseDirectory, "summary.md");
-
     private static readonly Regex TimeEntryPattern = new(@"^- \d+h\d{2}m$", RegexOptions.Compiled);
     private static readonly Regex TimeValuePattern = new(@"- (\d+)h(\d{2})m", RegexOptions.Compiled);
 
     private readonly LogService _logService;
     private readonly AppConfig _config;
+    private readonly TimeTrackingService _trackingService;
+    private readonly string _summaryPath;
 
-    public SummaryService(LogService logService, AppConfig config)
+    public SummaryService(LogService logService, AppConfig config, TimeTrackingService trackingService, string? baseDir = null)
     {
         _logService = logService;
         _config = config;
+        _trackingService = trackingService;
+        _summaryPath = Path.Combine(baseDir ?? AppContext.BaseDirectory, "summary.md");
     }
 
     public string GenerateSummary(DateTime from, DateTime to)
@@ -32,7 +33,24 @@ public class SummaryService
         var categoryMinutes = new Dictionary<string, int>();
 
         foreach (var date in dates)
-            ParseLog(_logService.GetLogPath(date), whatIDidItems, categoryMinutes);
+            ParseLog(_logService.GetLogPath(date), date, whatIDidItems, categoryMinutes);
+
+        if (to.Date >= DateTime.Today)
+        {
+            var state = _trackingService.LoadState();
+            if (state?.Active == true && state.StartTime.Date <= DateTime.Today)
+            {
+                DateTime sessionStart = state.StartTime.Date < DateTime.Today
+                    ? DateTime.Today
+                    : state.StartTime;
+                int liveMinutes = RoundToFiveMinutes((DateTime.Now - sessionStart).TotalMinutes);
+                if (liveMinutes > 0)
+                {
+                    categoryMinutes.TryGetValue(state.Category, out int existing);
+                    categoryMinutes[state.Category] = existing + liveMinutes;
+                }
+            }
+        }
 
         var sb = new StringBuilder();
         sb.AppendLine($"# Summary for the period from {from:yyyy-MM-dd} to {to:yyyy-MM-dd}");
@@ -57,11 +75,11 @@ public class SummaryService
         sb.AppendLine("## Total");
         sb.AppendLine($"- {FormatTime(totalMinutes)}");
 
-        File.WriteAllText(SummaryPath, sb.ToString().TrimEnd() + Environment.NewLine, Encoding.UTF8);
-        return SummaryPath;
+        File.WriteAllText(_summaryPath, sb.ToString().TrimEnd() + Environment.NewLine, Encoding.UTF8);
+        return _summaryPath;
     }
 
-    private static void ParseLog(string path, List<string> whatIDidItems, Dictionary<string, int> categoryMinutes)
+    private static void ParseLog(string path, DateTime date, List<string> whatIDidItems, Dictionary<string, int> categoryMinutes)
     {
         string? currentSection = null;
 
@@ -79,7 +97,7 @@ public class SummaryService
 
             if (currentSection == "What I did" && line.StartsWith("- ") && !TimeEntryPattern.IsMatch(line.Trim()))
             {
-                whatIDidItems.Add(line);
+                whatIDidItems.Add($"{line} [{date:yyyy-MM-dd}]");
             }
             else if (currentSection != null
                      && currentSection != "What I did"
@@ -96,6 +114,9 @@ public class SummaryService
             }
         }
     }
+
+    private static int RoundToFiveMinutes(double totalMinutes) =>
+        (int)Math.Round(totalMinutes / 5.0, MidpointRounding.AwayFromZero) * 5;
 
     private static string FormatTime(int totalMinutes)
     {

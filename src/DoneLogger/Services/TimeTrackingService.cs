@@ -5,9 +5,6 @@ using System.Text.Json;
 
 public class TimeTrackingService
 {
-    private static readonly string StatePath =
-        Path.Combine(AppContext.BaseDirectory, "state.json");
-
     private static readonly JsonSerializerOptions JsonOpts = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -15,15 +12,20 @@ public class TimeTrackingService
     };
 
     private readonly LogService _logService;
+    private readonly string _statePath;
 
-    public TimeTrackingService(LogService logService) => _logService = logService;
+    public TimeTrackingService(LogService logService, string? baseDir = null)
+    {
+        _logService = logService;
+        _statePath = Path.Combine(baseDir ?? AppContext.BaseDirectory, "state.json");
+    }
 
     public TrackingState? LoadState()
     {
-        if (!File.Exists(StatePath)) return null;
+        if (!File.Exists(_statePath)) return null;
         try
         {
-            return JsonSerializer.Deserialize<TrackingState>(File.ReadAllText(StatePath), JsonOpts);
+            return JsonSerializer.Deserialize<TrackingState>(File.ReadAllText(_statePath), JsonOpts);
         }
         catch
         {
@@ -39,7 +41,7 @@ public class TimeTrackingService
             StartTime = customTime ?? DateTime.Now,
             Category = category
         };
-        File.WriteAllText(StatePath, JsonSerializer.Serialize(state, JsonOpts));
+        File.WriteAllText(_statePath, JsonSerializer.Serialize(state, JsonOpts));
     }
 
     // Returns a message to show the user when midnight was crossed, null otherwise.
@@ -82,8 +84,8 @@ public class TimeTrackingService
 
     public void ClearState()
     {
-        if (File.Exists(StatePath))
-            File.Delete(StatePath);
+        if (File.Exists(_statePath))
+            File.Delete(_statePath);
     }
 
     private static int RoundToFiveMinutes(double totalMinutes) =>
