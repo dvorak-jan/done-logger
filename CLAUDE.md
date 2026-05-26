@@ -93,7 +93,7 @@ When asked to "implement new gh issues" or similar, follow this workflow for eac
    - Keep the scope tight — only what the issue asks for
 
 3. **Update CHANGELOG.md**
-   - Add an entry under the appropriate section (e.g. `## Unreleased`)
+   - Add an entry under the appropriate section. If there is no release marked as `Unreleased` in the changelog, please create a new release section with the appropriate number (if the change is minor, increase the minor number, otherwise feel free to increase the major version number) and follow this format pattern: `## [1.1] - Unreleased`
    - Format: `- <Brief description>`
 
 4. **Update README.md**
