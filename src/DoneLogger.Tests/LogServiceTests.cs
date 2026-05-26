@@ -136,7 +136,7 @@ public class LogServiceTests
     }
 
     [Fact]
-    public void UpdateCategoryTime_ThrowsWhenCategoryNotFound()
+    public void UpdateCategoryTime_ThrowsWhenCategoryNotInConfigOrFile()
     {
         using var tmp = new TempDir();
         var svc = new LogService(MakeConfig(tmp.Path));
@@ -145,6 +145,27 @@ public class LogServiceTests
 
         Assert.Throws<InvalidOperationException>(() =>
             svc.UpdateCategoryTime(svc.GetLogPath(date), "NonExistent", 30));
+    }
+
+    [Fact]
+    public void UpdateCategoryTime_AppendsSectionWhenCategoryInConfigButMissingFromFile()
+    {
+        using var tmp = new TempDir();
+        var config = MakeConfig(tmp.Path);
+        var svc = new LogService(config);
+        var date = new DateTime(2026, 1, 15);
+        svc.CreateLog(date);
+
+        // Simulate a category added to config after the file was created.
+        config.Categories = config.Categories.Append(new Category { Name = "Research" }).ToList();
+
+        string path = svc.GetLogPath(date);
+        svc.UpdateCategoryTime(path, "Research", 45);
+
+        string content = File.ReadAllText(path);
+        int researchIdx = content.IndexOf("## Research");
+        Assert.True(researchIdx > 0);
+        Assert.Contains("- 0h45m", content[researchIdx..]);
     }
 
     [Fact]

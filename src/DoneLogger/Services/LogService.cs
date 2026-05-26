@@ -88,7 +88,15 @@ public class LogService
 
         int sectionStart = lines.FindIndex(l => l.TrimEnd() == $"## {categoryName}");
         if (sectionStart < 0)
-            throw new InvalidOperationException($"Category '{categoryName}' not found in {Path.GetFileName(filePath)}.");
+        {
+            if (!_config.Categories.Any(c => c.Name == categoryName))
+                throw new InvalidOperationException($"Category '{categoryName}' not found in {Path.GetFileName(filePath)}.");
+
+            if (lines.Count > 0 && !string.IsNullOrWhiteSpace(lines[^1]))
+                lines.Add(string.Empty);
+            sectionStart = lines.Count;
+            lines.Add($"## {categoryName}");
+        }
 
         int sectionEnd = lines.Count;
         for (int i = sectionStart + 1; i < lines.Count; i++)
