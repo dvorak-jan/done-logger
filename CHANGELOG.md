@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1] - Unreleased
 
+### Added
+- Splash screen displayed for ~3 seconds on startup, with a smooth fade-out; loads `splash.png` from the executable folder
+
 ### Fixed
 - Adding a new category to `config.json` no longer breaks time tracking against existing daily log files — the missing category section is appended to the file automatically
 
