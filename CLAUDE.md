@@ -80,6 +80,10 @@ The file format and folder hierarchy are a public interface — external tools (
 
 When asked to "implement new gh issues" or similar, follow this workflow for each open, unassigned issue — one at a time, in order of issue number.
 
+### Feature branch check
+
+Check if you are in a new feature branch just stemmed-out from master. If not, inform the user. No changes should be committed to a stale branch or master directly.
+
 ### Per-issue process
 
 1. **Understand the problem**
@@ -93,7 +97,12 @@ When asked to "implement new gh issues" or similar, follow this workflow for eac
    - Keep the scope tight — only what the issue asks for
 
 3. **Update CHANGELOG.md**
-   - Add an entry under the appropriate section (e.g. `## Unreleased`)
+   - Add an entry under the appropriate section. If there is no release marked as `Unreleased` in the changelog, create a new release section following SemVer (https://semver.org):
+     - **Patch** (e.g. `0.1` → `0.1.1`) for backwards-compatible bug fixes.
+     - **Minor** (e.g. `0.1` → `0.2`) for backwards-compatible new features.
+     - **Major** (e.g. `0.2` → `1.0`) for breaking changes to user-visible behavior, config schema, or DB schema.
+     - When in doubt, ask before bumping major.
+     - Format: `## [<version>] - Unreleased` (e.g. `## [0.2] - Unreleased`).
    - Format: `- <Brief description>`
 
 4. **Update README.md**
@@ -103,8 +112,7 @@ When asked to "implement new gh issues" or similar, follow this workflow for eac
 
 5. **Commit**
    - Stage all changed files
-   - Commit message format: `<prefix>: <short lowercase summary> (issue #<issue_number>)`
-     followed by a blank line and one or two sentences explaining what was done and why.
+   - Commit message format: `<prefix>: <short lowercase summary> (issue #<issue_number>)`. Just one-liner please.
    - Prefix must be one of: `feat:`, `fix:`, `chore:`, `refactor:`, `docs:`
    - The summary after the prefix must start with a lowercase letter.
    - Example: `feat: add retry logic for failed connections (issue #42)`

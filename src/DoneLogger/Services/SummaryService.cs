@@ -107,12 +107,24 @@ public class SummaryService
                 var match = TimeValuePattern.Match(line.Trim());
                 if (match.Success)
                 {
-                    int mins = int.Parse(match.Groups[1].Value) * 60 + int.Parse(match.Groups[2].Value);
+                    int mins = ParseTimeMinutes(match);
                     categoryMinutes.TryGetValue(currentSection, out int existing);
                     categoryMinutes[currentSection] = existing + mins;
                 }
             }
         }
+    }
+
+    // Hours are an unbounded \d+ in the file format, so a hand-edited or
+    // corrupted entry could overflow int. Parse defensively and ignore
+    // implausibly large values rather than crash or silently wrap around.
+    private const long MaxParsableHours = 100_000;
+
+    private static int ParseTimeMinutes(Match match)
+    {
+        if (!long.TryParse(match.Groups[1].Value, out long hours) || hours < 0 || hours > MaxParsableHours)
+            return 0;
+        return (int)hours * 60 + int.Parse(match.Groups[2].Value);
     }
 
     private static int RoundToFiveMinutes(double totalMinutes) =>

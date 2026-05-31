@@ -88,7 +88,15 @@ public class LogService
 
         int sectionStart = lines.FindIndex(l => l.TrimEnd() == $"## {categoryName}");
         if (sectionStart < 0)
-            throw new InvalidOperationException($"Category '{categoryName}' not found in {Path.GetFileName(filePath)}.");
+        {
+            if (!_config.Categories.Any(c => c.Name == categoryName))
+                throw new InvalidOperationException($"Category '{categoryName}' not found in {Path.GetFileName(filePath)}.");
+
+            if (lines.Count > 0 && !string.IsNullOrWhiteSpace(lines[^1]))
+                lines.Add(string.Empty);
+            sectionStart = lines.Count;
+            lines.Add($"## {categoryName}");
+        }
 
         int sectionEnd = lines.Count;
         for (int i = sectionStart + 1; i < lines.Count; i++)
@@ -171,11 +179,18 @@ public class LogService
         File.WriteAllLines(filePath, lines, Encoding.UTF8);
     }
 
+    // Hours are an unbounded \d+ in the file format, so a hand-edited or
+    // corrupted entry could overflow int. Parse defensively and ignore
+    // implausibly large values rather than crash or silently wrap around.
+    private const long MaxParsableHours = 100_000;
+
     private int ParseTimeMinutes(string timeEntry)
     {
         var match = TimeValuePattern.Match(timeEntry.Trim());
         if (!match.Success) return 0;
-        return int.Parse(match.Groups[1].Value) * 60 + int.Parse(match.Groups[2].Value);
+        if (!long.TryParse(match.Groups[1].Value, out long hours) || hours < 0 || hours > MaxParsableHours)
+            return 0;
+        return (int)hours * 60 + int.Parse(match.Groups[2].Value);
     }
 
     private static string FormatTimeEntry(int totalMinutes)

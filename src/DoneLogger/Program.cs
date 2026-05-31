@@ -16,7 +16,20 @@ static class Program
             var logService = new LogService(config);
             var trackingService = new TimeTrackingService(logService);
             var summaryService = new SummaryService(logService, config, trackingService);
-            Application.Run(new MainForm(config, logService, trackingService, summaryService));
+
+            var splash = new SplashForm();
+            var context = new ApplicationContext();
+
+            splash.SplashComplete += () =>
+            {
+                var mainForm = new MainForm(config, logService, trackingService, summaryService);
+                mainForm.FormClosed += (s, e) => context.ExitThread();
+                mainForm.Show();
+                splash.Close();
+            };
+
+            splash.Show();
+            Application.Run(context);
         }
         catch (Exception ex)
         {
