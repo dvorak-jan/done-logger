@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="donelogger.ico" />
+    <EmbeddedResource Include="..\..\splash.png" LogicalName="splash.png" />
   </ItemGroup>
 
 </Project>

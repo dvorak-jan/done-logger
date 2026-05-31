@@ -17,8 +17,7 @@ static class Program
             var trackingService = new TimeTrackingService(logService);
             var summaryService = new SummaryService(logService, config, trackingService);
 
-            var imagePath = Path.Combine(AppContext.BaseDirectory, "splash.png");
-            var splash = new SplashForm(imagePath);
+            var splash = new SplashForm();
             var context = new ApplicationContext();
 
             splash.SplashComplete += () =>
