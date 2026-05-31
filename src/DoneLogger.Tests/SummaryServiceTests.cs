@@ -117,6 +117,32 @@ public class SummaryServiceTests
         Assert.Contains("- 1h30m", totalSection);
     }
 
+    [Fact]
+    public void GenerateSummary_OverflowingHoursValue_IsIgnoredNotCrashOrWrap()
+    {
+        using var tmp = new TempDir();
+        var config = MakeConfig(tmp.Path);
+        var logSvc = new LogService(config);
+        var trackSvc = new TimeTrackingService(logSvc, tmp.Path);
+        var summarySvc = new SummaryService(logSvc, config, trackSvc, tmp.Path);
+
+        var date = new DateTime(2026, 1, 15);
+        logSvc.CreateLog(date);
+
+        // Inject a hand-corrupted time entry whose hour count overflows int.
+        string path = logSvc.GetLogPath(date);
+        var lines = File.ReadAllLines(path).ToList();
+        int workIdx = lines.IndexOf("## Work");
+        lines.Insert(workIdx + 1, "- 99999999999h00m");
+        File.WriteAllLines(path, lines);
+
+        // Must not throw OverflowException; the absurd value is ignored (0).
+        string content = File.ReadAllText(summarySvc.GenerateSummary(date, date));
+
+        int totalIdx = content.IndexOf("## Total");
+        Assert.Contains("- 0h00m", content[totalIdx..]);
+    }
+
     // ── Edge cases ────────────────────────────────────────────────
 
     [Fact]

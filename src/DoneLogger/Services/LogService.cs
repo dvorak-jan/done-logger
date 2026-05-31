@@ -179,11 +179,18 @@ public class LogService
         File.WriteAllLines(filePath, lines, Encoding.UTF8);
     }
 
+    // Hours are an unbounded \d+ in the file format, so a hand-edited or
+    // corrupted entry could overflow int. Parse defensively and ignore
+    // implausibly large values rather than crash or silently wrap around.
+    private const long MaxParsableHours = 100_000;
+
     private int ParseTimeMinutes(string timeEntry)
     {
         var match = TimeValuePattern.Match(timeEntry.Trim());
         if (!match.Success) return 0;
-        return int.Parse(match.Groups[1].Value) * 60 + int.Parse(match.Groups[2].Value);
+        if (!long.TryParse(match.Groups[1].Value, out long hours) || hours < 0 || hours > MaxParsableHours)
+            return 0;
+        return (int)hours * 60 + int.Parse(match.Groups[2].Value);
     }
 
     private static string FormatTimeEntry(int totalMinutes)

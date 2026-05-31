@@ -11,6 +11,11 @@ public class TimeTrackingService
         WriteIndented = true
     };
 
+    // A single day cannot contain more than 24h of tracked time. Clamp each
+    // day's contribution to guard against a tampered or corrupted state.json
+    // (e.g. a StartTime set far in the past) writing absurd totals into a log.
+    private const int MaxMinutesPerDay = 24 * 60;
+
     private readonly LogService _logService;
     private readonly string _statePath;
 
@@ -55,14 +60,14 @@ public class TimeTrackingService
 
         if (stopTime.Date == startTime.Date)
         {
-            int minutes = RoundToFiveMinutes((stopTime - startTime).TotalMinutes);
+            int minutes = Math.Min(RoundToFiveMinutes((stopTime - startTime).TotalMinutes), MaxMinutesPerDay);
             _logService.UpdateCategoryTime(_logService.GetLogPath(startTime.Date), state.Category, minutes);
         }
         else
         {
             DateTime midnight = startTime.Date.AddDays(1);
-            int minutesBefore = RoundToFiveMinutes((midnight - startTime).TotalMinutes);
-            int minutesAfter = RoundToFiveMinutes((stopTime - midnight).TotalMinutes);
+            int minutesBefore = Math.Min(RoundToFiveMinutes((midnight - startTime).TotalMinutes), MaxMinutesPerDay);
+            int minutesAfter = Math.Min(RoundToFiveMinutes((stopTime - midnight).TotalMinutes), MaxMinutesPerDay);
 
             if (minutesBefore > 0)
                 _logService.UpdateCategoryTime(_logService.GetLogPath(startTime.Date), state.Category, minutesBefore);

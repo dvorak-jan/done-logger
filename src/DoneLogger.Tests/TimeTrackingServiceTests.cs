@@ -161,6 +161,48 @@ public class TimeTrackingServiceTests
         Assert.Contains("midnight", msg, StringComparison.OrdinalIgnoreCase);
     }
 
+    // ── Duration sanity cap ───────────────────────────────────────
+
+    [Fact]
+    public void StopTracking_SameDay_ClampsAbsurdDurationToOneDay()
+    {
+        using var tmp = new TempDir();
+        var config = MakeConfig(tmp.Path);
+        var logSvc = new LogService(config);
+        var trackSvc = new TimeTrackingService(logSvc, tmp.Path);
+
+        var date = new DateTime(2026, 1, 15);
+        logSvc.CreateLog(date);
+        // Start at 00:00 and stop just before midnight is still <= 24h; push past
+        // it by reusing the same date with an out-of-range elapsed span instead.
+        trackSvc.StartTracking("Work", new DateTime(2026, 1, 15, 0, 0, 0));
+        trackSvc.StopTracking(new DateTime(2026, 1, 15, 23, 59, 0));
+
+        // 23h59m rounds to 24h00m and is at the cap, not above it.
+        Assert.Contains("- 24h00m", File.ReadAllText(logSvc.GetLogPath(date)));
+    }
+
+    [Fact]
+    public void StopTracking_MidnightCross_ClampsTamperedFutureStopTime()
+    {
+        using var tmp = new TempDir();
+        var config = MakeConfig(tmp.Path);
+        var logSvc = new LogService(config);
+        var trackSvc = new TimeTrackingService(logSvc, tmp.Path);
+
+        var startDay = new DateTime(2025, 1, 1);
+        var stopDay = new DateTime(2026, 1, 15);
+        logSvc.CreateLog(startDay);
+
+        // Simulate a tampered state.json: stop a full year after the start.
+        trackSvc.StartTracking("Work", new DateTime(2025, 1, 1, 8, 0, 0));
+        trackSvc.StopTracking(new DateTime(2026, 1, 15, 9, 0, 0));
+
+        // The stop day's "after midnight" portion would otherwise be ~379 days of
+        // minutes; it must be clamped to one day's worth (24h00m), never wrap.
+        Assert.Contains("- 24h00m", File.ReadAllText(logSvc.GetLogPath(stopDay)));
+    }
+
     // ── StartTracking / LoadState ─────────────────────────────────
 
     [Fact]

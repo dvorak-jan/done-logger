@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Adding a new category to `config.json` no longer breaks time tracking against existing daily log files — the missing category section is appended to the file automatically
+- Hardened time parsing against hand-edited or corrupted log files: implausibly large hour values are now ignored instead of crashing or silently overflowing
+- A single day's tracked time is now capped at 24h when stopping a session, guarding against a tampered `state.json` writing absurd totals into a log
 
 ## [1.0] - 2026-05-19
 
