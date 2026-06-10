@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2] - Unreleased
+
+### Fixed
+- A file in the data folder whose name matches the `YYYY-MM-DD.md` shape but is not a real date (e.g. `2026-13-01.md`) no longer crashes the application at startup; such files are skipped
+- Time entries can no longer be written into the narrative sections (`What I did`, `What is next`) via a tampered `state.json` — the tracked category is always validated against `config.json`
+- `config.json` category names are now validated on startup: empty names, control characters, leading/trailing whitespace, duplicates, and the reserved section names `What I did` / `What is next` are rejected with a clear error instead of silently corrupting the log file format
+- CI workflow now runs with read-only repository permissions
+
 ## [1.1] - 2026-05-31
 
 ### Added

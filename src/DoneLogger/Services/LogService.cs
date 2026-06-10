@@ -19,28 +19,32 @@ public class LogService
 
     public bool LogExists(DateTime date) => File.Exists(GetLogPath(date));
 
-    public IReadOnlyList<DateTime> GetAllLogDates()
-    {
-        if (!Directory.Exists(_config.DataRoot)) return Array.Empty<DateTime>();
-
-        return Directory
-            .GetFiles(_config.DataRoot, "*.md", SearchOption.AllDirectories)
-            .Where(f => LogFileNamePattern.IsMatch(Path.GetFileName(f)))
-            .Select(f => DateTime.ParseExact(Path.GetFileNameWithoutExtension(f), "yyyy-MM-dd",
-                System.Globalization.CultureInfo.InvariantCulture))
+    public IReadOnlyList<DateTime> GetAllLogDates() =>
+        EnumerateLogFiles()
+            .Select(f => f.Date)
             .OrderByDescending(d => d)
             .ToList();
-    }
 
-    public string? FindMostRecentLogPath()
-    {
-        if (!Directory.Exists(_config.DataRoot)) return null;
-
-        return Directory
-            .GetFiles(_config.DataRoot, "*.md", SearchOption.AllDirectories)
-            .Where(f => LogFileNamePattern.IsMatch(Path.GetFileName(f)))
-            .OrderBy(f => Path.GetFileNameWithoutExtension(f))
+    public string? FindMostRecentLogPath() =>
+        EnumerateLogFiles()
+            .OrderBy(f => f.Date)
+            .Select(f => f.Path)
             .LastOrDefault();
+
+    // A filename can match the yyyy-MM-dd shape without being a real date
+    // (e.g. 2026-13-01.md). Skip such files instead of crashing at startup.
+    private IEnumerable<(DateTime Date, string Path)> EnumerateLogFiles()
+    {
+        if (!Directory.Exists(_config.DataRoot)) yield break;
+
+        foreach (var file in Directory.GetFiles(_config.DataRoot, "*.md", SearchOption.AllDirectories))
+        {
+            if (!LogFileNamePattern.IsMatch(Path.GetFileName(file))) continue;
+            if (DateTime.TryParseExact(Path.GetFileNameWithoutExtension(file), "yyyy-MM-dd",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.None, out var date))
+                yield return (date, file);
+        }
     }
 
     public void CreateLog(DateTime date)
@@ -84,14 +88,17 @@ public class LogService
     {
         if (minutes <= 0) return;
 
+        // Validate against config even when the section already exists in the
+        // file: a tampered state.json must not be able to write time entries
+        // into narrative sections such as "What I did" or "What is next".
+        if (!_config.Categories.Any(c => c.Name == categoryName))
+            throw new InvalidOperationException($"Category '{categoryName}' is not defined in config.json.");
+
         var lines = File.ReadAllLines(filePath).ToList();
 
         int sectionStart = lines.FindIndex(l => l.TrimEnd() == $"## {categoryName}");
         if (sectionStart < 0)
         {
-            if (!_config.Categories.Any(c => c.Name == categoryName))
-                throw new InvalidOperationException($"Category '{categoryName}' not found in {Path.GetFileName(filePath)}.");
-
             if (lines.Count > 0 && !string.IsNullOrWhiteSpace(lines[^1]))
                 lines.Add(string.Empty);
             sectionStart = lines.Count;

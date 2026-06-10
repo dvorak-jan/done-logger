@@ -34,7 +34,7 @@ Create `config.json` in the same folder as the executable. Use this template:
 |---|---|
 | `dataRoot` | Folder where log files are stored |
 | `editor` | Path to the text editor opened by "Edit Latest Log" |
-| `categories` | List of work categories; exactly one must have `"isDefault": true` |
+| `categories` | List of work categories; exactly one must have `"isDefault": true`. Names must be unique, non-empty, without leading/trailing whitespace or control characters, and must not be `What I did` or `What is next` (reserved section names) |
 
 ---
 

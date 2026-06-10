@@ -148,6 +148,20 @@ public class LogServiceTests
     }
 
     [Fact]
+    public void UpdateCategoryTime_ThrowsForNarrativeSectionEvenWhenPresentInFile()
+    {
+        using var tmp = new TempDir();
+        var svc = new LogService(MakeConfig(tmp.Path));
+        var date = new DateTime(2026, 1, 15);
+        svc.CreateLog(date);
+
+        // "What is next" exists as a heading in the file but is not a category;
+        // a tampered state.json must not be able to write time entries into it.
+        Assert.Throws<InvalidOperationException>(() =>
+            svc.UpdateCategoryTime(svc.GetLogPath(date), "What is next", 30));
+    }
+
+    [Fact]
     public void UpdateCategoryTime_AppendsSectionWhenCategoryInConfigButMissingFromFile()
     {
         using var tmp = new TempDir();
@@ -215,5 +229,37 @@ public class LogServiceTests
         var result = svc.GetAllLogDates();
 
         Assert.Empty(result);
+    }
+
+    [Fact]
+    public void GetAllLogDates_SkipsFilesWithImpossibleDateNames()
+    {
+        using var tmp = new TempDir();
+        var svc = new LogService(MakeConfig(tmp.Path));
+        var date = new DateTime(2026, 1, 15);
+        svc.CreateLog(date);
+
+        // Matches the yyyy-MM-dd filename shape but is not a real date;
+        // must be skipped, not crash the app at startup.
+        File.WriteAllText(Path.Combine(tmp.Path, "2026-13-01.md"), "# bogus");
+
+        var result = svc.GetAllLogDates();
+
+        Assert.Single(result);
+        Assert.Equal(date, result[0]);
+    }
+
+    [Fact]
+    public void FindMostRecentLogPath_SkipsFilesWithImpossibleDateNames()
+    {
+        using var tmp = new TempDir();
+        var svc = new LogService(MakeConfig(tmp.Path));
+        var date = new DateTime(2026, 1, 15);
+        svc.CreateLog(date);
+
+        // Sorts after any real date but must never be picked as most recent.
+        File.WriteAllText(Path.Combine(tmp.Path, "9999-99-99.md"), "# bogus");
+
+        Assert.Equal(svc.GetLogPath(date), svc.FindMostRecentLogPath());
     }
 }
